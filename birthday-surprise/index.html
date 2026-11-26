@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Birthday Surprise 🎀</title>
+<meta name="theme-color" content="#ffd6e8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎀%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="is-loading">
+
+<!-- Background + effects layers -->
+<canvas id="bg" aria-hidden="true"></canvas>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Loading animation -->
+<div id="loader">
+  <div class="loader-heart" data-icon="heart"></div>
+  <p class="loader-text script">Wrapping your surprise…</p>
+  <div class="loader-bar"><i id="loaderFill"></i></div>
+</div>
+
+<!-- Progress indicator -->
+<header id="hud" class="hud" hidden>
+  <div class="hud-label"><span data-icon="sparkles"></span> Surprise explored <b id="pCount">0/7</b></div>
+  <div class="hud-bar"><i id="pFill"></i></div>
+</header>
+
+<!-- Floating music toggle -->
+<button id="musicBtn" class="fab" aria-label="Play or pause music" title="Music">
+  <span id="musicIcon" data-icon="volume-x"></span>
+</button>
+
+<!-- ============ 1. GRAND WELCOME ============ -->
+<section id="welcome" class="scene welcome">
+  <p class="eyebrow">a surprise for <b data-bind="friendName"></b></p>
+  <h1 class="welcome-title script" id="welcomeTitle" aria-label="Heyyy Birthday Star!">Heyyy Birthday Star! 🎀</h1>
+  <p class="subtitle">Someone special has a little surprise waiting for you...</p>
+
+  <button class="gift" id="giftBtn" aria-label="Open the gift box">
+    <span class="gift-glow"></span>
+    <span class="gift-lid"><i class="bow bow-l"></i><i class="bow bow-r"></i><i class="lid-ribbon"></i></span>
+    <span class="gift-box"><i class="box-ribbon"></i></span>
+  </button>
+
+  <button class="btn glow" id="openBtn">OPEN YOUR SURPRISE 🎁</button>
+</section>
+
+<!-- ============ THE JOURNEY (unlocked after the gift opens) ============ -->
+<div id="journey" class="journey" hidden>
+
+  <!-- 2. BIRTHDAY CELEBRATION -->
+  <section id="celebrate" class="sec sec-celebrate">
+    <div class="balloons" id="balloons" aria-hidden="true"></div>
+    <h2 class="mega" id="megaTitle" aria-label="Happy Birthdayyyyy!">HAPPY BIRTHDAYYYYY! 🎂</h2>
+    <div class="name-glow script" data-bind="friendName"></div>
+
+    <div class="cake-wrap reveal">
+      <svg id="cake" viewBox="0 0 260 250" role="img" aria-label="Birthday cake with candles">
+        <defs>
+          <radialGradient id="halo"><stop offset="0" stop-color="#ffe9a8" stop-opacity=".95"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/></radialGradient>
+          <linearGradient id="t1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc9e0"/><stop offset="1" stop-color="#ff9cc4"/></linearGradient>
+          <linearGradient id="t2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3d6ff"/><stop offset="1" stop-color="#c3a9ff"/></linearGradient>
+        </defs>
+        <ellipse cx="130" cy="232" rx="118" ry="14" fill="#fff" opacity=".8"/>
+        <rect x="30" y="160" width="200" height="68" rx="18" fill="url(#t1)"/>
+        <path d="M30 174Q30 156 48 156H212Q230 156 230 174Q230 192 218 192Q208 192 208 180Q208 198 192 198Q178 198 178 182Q178 202 160 202Q146 202 146 184Q146 200 128 200Q112 200 112 182Q112 198 96 198Q82 198 82 180Q82 194 68 194Q54 194 54 180Q54 192 42 192Q30 192 30 174Z" fill="#fff"/>
+        <rect x="62" y="112" width="136" height="54" rx="16" fill="url(#t2)"/>
+        <path d="M62 126Q62 110 80 110H180Q198 110 198 126Q198 142 186 142Q176 142 176 130Q176 146 160 146Q146 146 146 130Q146 144 130 144Q114 144 114 130Q114 146 98 146Q84 146 84 130Q84 140 72 140Q62 140 62 126Z" fill="#fff"/>
+        <g fill="#ff6fa8"><circle cx="70" cy="214" r="4"/><circle cx="110" cy="218" r="4"/><circle cx="150" cy="216" r="4"/><circle cx="190" cy="213" r="4"/></g>
+        <g fill="#8fd3ff"><circle cx="92" cy="212" r="3.5"/><circle cx="130" cy="220" r="3.5"/><circle cx="170" cy="214" r="3.5"/></g>
+        <g id="candles"></g>
+      </svg>
+    </div>
+
+    <button class="btn glow" id="blowBtn"><span data-icon="wind"></span> BLOW THE CANDLES 🕯️</button>
+    <div class="glass wish" id="wishCard" hidden>
+      <h3 class="script" id="wishTitle"></h3>
+      <p id="wishText"></p>
+    </div>
+    <button class="next" data-next="#letter"><span>Keep going</span><span data-icon="chevron-down"></span></button>
+  </section>
+
+  <!-- 3. LETTER -->
+  <section id="letter" class="sec">
+    <h2 class="sec-title script reveal">A special message for you 💌</h2>
+    <div class="envelope reveal" id="envelope">
+      <div class="env-back"></div>
+      <div class="env-paper"><span class="script">For {friend}</span></div>
+      <div class="env-front"></div>
+      <div class="env-flap"><span class="seal" data-icon="heart"></span></div>
+    </div>
+    <button class="btn glow" id="letterBtn"><span data-icon="mail-open"></span> OPEN MY LETTER</button>
+    <article class="glass letter-paper" id="letterPaper" hidden>
+      <h3 class="script" id="letterTitle"></h3>
+      <p id="letterText" class="typing"></p>
+      <p class="sign script" id="letterSign"></p>
+    </article>
+    <button class="next" data-next="#memories"><span>Keep going</span><span data-icon="chevron-down"></span></button>
+  </section>
+
+  <!-- 4. GALLERY -->
+  <section id="memories" class="sec">
+    <h2 class="sec-title script reveal">Our beautiful memories 📸</h2>
+    <p class="sec-sub reveal">Tap any photo to see it big</p>
+    <div class="gallery" id="gallery"></div>
+    <button class="next" data-next="#special"><span>Keep going</span><span data-icon="chevron-down"></span></button>
+  </section>
+
+  <!-- 5. WHY YOU ARE SPECIAL -->
+  <section id="special" class="sec">
+    <h2 class="sec-title script reveal">Why you are special 💗</h2>
+    <p class="sec-sub reveal">Tap each card to reveal <span id="flipCount">0</span> / <span id="flipTotal">0</span></p>
+    <div class="reasons" id="reasons"></div>
+    <button class="next" data-next="#game"><span>Keep going</span><span data-icon="chevron-down"></span></button>
+  </section>
+
+  <!-- 6. MEMORY GAME -->
+  <section id="game" class="sec">
+    <h2 class="sec-title script reveal">A little memory game 🎮</h2>
+    <p class="sec-sub reveal">Match all the pairs to win!</p>
+    <div class="glass game-card reveal">
+      <div class="game-stats">
+        <div><small>Score</small><b id="gScore">0</b></div>
+        <div><small>Pairs</small><b id="gPairs">0/8</b></div>
+        <div><small>Moves</small><b id="gMoves">0</b></div>
+        <div><small>Best</small><b id="gBest">–</b></div>
+      </div>
+      <div class="board" id="board"></div>
+      <p class="game-msg" id="gMsg" aria-live="polite"></p>
+      <button class="btn small" id="restartBtn"><span data-icon="rotate-ccw"></span> Restart</button>
+    </div>
+    <button class="next" data-next="#secret"><span>Keep going</span><span data-icon="chevron-down"></span></button>
+  </section>
+
+  <!-- 7. SECRET SURPRISE -->
+  <section id="secret" class="sec sec-secret">
+    <h2 class="sec-title script reveal">The secret surprise 🔐</h2>
+    <p class="sec-sub reveal" id="secretHint">There is one more surprise...</p>
+    <div class="lockbox reveal" id="lockbox">
+      <div class="lb-glow"></div>
+      <div class="lb-lid"></div>
+      <div class="lb-body"><i></i></div>
+      <div class="lb-lock" id="lbLock"><span data-icon="lock"></span></div>
+    </div>
+    <button class="btn glow" id="unlockBtn"><span data-icon="lock-open"></span> UNLOCK YOUR FINAL SURPRISE</button>
+    <div class="glass final-card" id="finalCard" hidden>
+      <h3 class="script" id="secretTitle"></h3>
+      <p id="secretMsg"></p>
+      <div class="mem-grid" id="memGrid"></div>
+    </div>
+    <button class="next" data-next="#finale"><span>Keep going</span><span data-icon="chevron-down"></span></button>
+  </section>
+
+  <!-- 8. FINAL WISH -->
+  <section id="finale" class="sec sec-finale">
+    <div class="stars" aria-hidden="true"></div>
+    <p class="eyebrow reveal">one last thing...</p>
+    <h2 class="final-title script reveal">Once again, Happy Birthday, <span class="shine" data-bind="friendName"></span>! 🌟</h2>
+    <p class="final-msg reveal" id="closingMsg"></p>
+    <p class="sign script reveal" id="closingSign"></p>
+    <div class="final-actions reveal">
+      <button class="btn glow" id="replayBtn">REPLAY THE MAGIC ✨</button>
+      <button class="btn" id="musicBtn2"><span id="musicIcon2" data-icon="music"></span> <span id="musicLabel">Play music</span></button>
+    </div>
+  </section>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="lb-close" id="lbClose" aria-label="Close"><span data-icon="x"></span></button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous photo"><span data-icon="chevron-left"></span></button>
+  <figure>
+    <img id="lbImg" alt="">
+    <figcaption><span id="lbCap"></span><small id="lbCount"></small></figcaption>
+  </figure>
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Next photo"><span data-icon="chevron-right"></span></button>
+</div>
+
+<script src="js/icons.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
